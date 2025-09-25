@@ -1,0 +1,96 @@
+# Maven
+# Build your Java project and run tests with Apache Maven.
+# Add steps that analyze code, save build artifacts, deploy, and more:
+# https://docs.microsoft.com/azure/devops/pipelines/languages/java
+
+parameters:
+- name: result
+  type: string
+  default: '**/target/site/serenity/'
+- name: tag
+  displayName: Tag
+  type: string
+  default: '@CRUD'
+
+- name: environment
+  displayName: Environment
+  values:
+    - stage
+  default: stage
+
+- name: browser
+  displayName: Browser
+  values:
+    - chrome
+    - edge
+  default: chrome
+
+- name: headless
+  displayName: Headless
+  values:
+    - true
+    - false
+  default: false
+  
+trigger:
+- master
+
+pool:
+  vmImage: ubuntu-latest
+
+steps:
+- task: Maven@3
+  inputs:
+    mavenPomFile: 'pom.xml'
+    mavenOptions: '-Xmx3072m'
+    javaHomeOption: 'JDKVersion'
+    # options: 'clean install'
+    jdkVersionOption: '1.11'
+    jdkArchitectureOption: 'x64'
+    # publishJUnitResults: true
+    testResultsFiles: '**/surefire-reports/TEST-*.xml'
+    goals: 'package'
+    
+- task: Maven@4
+  displayName: Execute tests
+  inputs:
+              mavenPomFile: 'pom.xml'
+              goals: 'test'
+              options: 'clean verify  -D"cucumber.filter.tags"="${{ parameters.tag }}" -Denvironment="${{ parameters.browser }}" -D"headless.mode"="${{ parameters.headless }} -Daccess=$(DOOR_ACCESS)'
+             # options: 'clean verify -D"cucumber.filter.tags"="${{ parameters.tag }}" -Denvironment="${{ parameters.browser }}"'
+              publishJUnitResults: true
+              testResultsFiles: '**/SERENITY-JUNIT-*.xml'
+              # testRunTitle: 'Prod UI Tests'
+              ${{ if and(eq(variables['Agent.OS'], 'Linux'), not(contains(parameters.pool, 'vmss'))) }}:
+                javaHomeOption: 'Path'
+                jdkVersionOption: 1.11
+                jdkDirectory: '/usr/lib/jvm/java-11-openjdk-11.0.16.1.1-1.el8_6.x86_64'
+                mavenVersionOption: 'Path'
+                mavenDirectory: '/opt/maven'
+              ${{ if and(eq(variables['Agent.OS'], 'Linux'), contains(parameters.pool, 'vmss')) }}:
+                javaHomeOption: 'Path'
+                jdkVersionOption: 1.11
+                jdkDirectory: '/usr/lib/jvm/java-11-openjdk-amd64'
+                mavenVersionOption: 'Path'
+                mavenDirectory: '/usr/share/maven'
+              ${{ if eq(variables['Agent.OS'], 'Windows_NT') }}:
+                javaHomeOption: 'Path'
+                jdkDirectory: $(java_home)
+                mavenVersionOption: 'Default'
+- task: PublishTestResults@2
+  inputs:
+    testResultsFormat: 'JUnit'
+    testResultsFiles: '**/target/failsafe-reports/*.xml'
+    
+- task: PublishCodeCoverageResults@2
+  inputs:
+    summaryFileLocation: 'target/site/serenity/serenity-summary.html' 
+    
+- task: PublishPipelineArtifact@1
+  condition: succeededOrFailed() 
+  inputs:
+    targetPath: '$(Pipeline.Workspace)'
+    publishLocation: 'pipeline'
+    fileSharePath: ${{ parameters.result }}
+
+    
