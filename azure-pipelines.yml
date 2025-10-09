@@ -189,16 +189,3 @@ steps:
     displayName: 'Attach Serenity report to pipeline summary (Windows)'
     condition: and(succeededOrFailed(), eq( variables['Agent.OS'], 'Windows_NT' ))
 
-  # (Azure Blob upload step removed)
-  - task: QodanaScan@2025
-    inputs:
-      args: -l,jetbrains/qodana-jvm-community:2025.2
-      # When prMode is set to true, Qodana analyzes only the files that have been changed
-      prMode: false,
-      postPrComment: true
-      # Upload Qodana results (SARIF, other artifacts, logs) as an artifact to the job
-      uploadResult: false
-      # quick-fixes available in Ultimate and Ultimate Plus plans
-      pushFixes: 'none'
-    env:
-      QODANA_TOKEN: $(QODANA_TOKEN)
