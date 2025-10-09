@@ -81,6 +81,23 @@ steps:
     displayName: 'Install Temurin JDK 21 (Adoptium)'
     condition: eq( variables['Agent.OS'], 'Linux' )
 
+  # Prepare webdriver binaries: remove accidental .exe files and ensure drivers are executable on Linux
+  - bash: |
+      set -euo pipefail
+      echo "Preparing webdriver binaries: cleaning Windows executables and setting +x on drivers"
+      WEBROOT="$(System.DefaultWorkingDirectory)/src/test/resources/webdriver"
+      if [ -d "$WEBROOT" ]; then
+        echo "Removing Windows .exe files under $WEBROOT"
+        find "$WEBROOT" -type f -name '*.exe' -print -delete || true
+        echo "Making chromedriver and msedgedriver executable if present"
+        find "$WEBROOT" -type f -iname 'chromedriver*' -exec chmod +x {} \; || true
+        find "$WEBROOT" -type f -iname 'msedgedriver*' -exec chmod +x {} \; || true
+      else
+        echo "$WEBROOT not found, skipping webdriver prep"
+      fi
+    displayName: 'Prepare webdriver binaries (cleanup + chmod)'
+    condition: eq( variables['Agent.OS'], 'Linux' )
+
   # Build and run tests using Maven and JDK 21
   - task: Maven@3
     inputs:
