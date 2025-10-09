@@ -21,26 +21,6 @@ parameters:
       - 'true'
       - 'false'
     default: 'false'
-  - name: publishToStorage
-    displayName: Publish Serenity report to Azure Blob
-    type: boolean
-    default: false
-  - name: azureServiceConnection
-    displayName: Azure service connection (for blob upload)
-    type: string
-    default: ''
-  - name: storageAccount
-    displayName: Storage account name
-    type: string
-    default: ''
-  - name: storageContainer
-    displayName: Storage container name
-    type: string
-    default: ''
-  - name: storagePath
-    displayName: Path/prefix inside container
-    type: string
-    default: ''
 
 trigger:
   - main
@@ -152,21 +132,5 @@ steps:
     displayName: 'Attach Serenity report to pipeline summary (Windows)'
     condition: and(succeededOrFailed(), eq( variables['Agent.OS'], 'Windows_NT' ))
 
-  # Optionally upload the Serenity site to Azure Blob Storage (requires service connection and storage details)
-  - task: AzureCLI@2
-    displayName: 'Upload Serenity report to Azure Blob (optional)'
-    condition: and(succeeded(), eq('${{ parameters.publishToStorage }}', 'true'))
-    inputs:
-      azureSubscription: ${{ parameters.azureServiceConnection }}
-      scriptType: bash
-      scriptLocation: inlineScript
-      inlineScript: |
-        set -euo pipefail
-        echo "Uploading Serenity report to storage account '${{ parameters.storageAccount }}' container '${{ parameters.storageContainer }}'..."
-        # Use Azure AD auth (service connection) to upload
-        az storage blob upload-batch --account-name "${{ parameters.storageAccount }}" \
-          -s target/site/serenity -d "${{ parameters.storageContainer }}" --destination-path "${{ parameters.storagePath }}" --auth-mode login --no-progress
-        echo "Upload complete"
-    env:
-      AZURE_CORE_OUTPUT: json
+  # (Azure Blob upload step removed)
 
