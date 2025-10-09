@@ -22,6 +22,16 @@ parameters:
       - 'true'
       - 'false'
     default: 'false'
+  - name: useRemoteDriver
+    displayName: Use Remote WebDriver
+    values:
+      - 'true'
+      - 'false'
+    default: 'false'
+  - name: remoteDriverUrl
+    displayName: Remote WebDriver URL
+    type: string
+    default: 'http://localhost:4444/wd/hub'
 
 trigger:
   - main
@@ -36,6 +46,10 @@ variables:
     value: ${{ parameters.browser }}
   - name: headless
     value: ${{ parameters.headless }}
+  - name: useRemoteDriver
+    value: ${{ parameters.useRemoteDriver }}
+  - name: remoteDriverUrl
+    value: ${{ parameters.remoteDriverUrl }}
 
 steps:
 
@@ -99,12 +113,12 @@ steps:
     displayName: 'Pre-clean: Kill Chrome processes (Windows)'
     condition: eq( variables['Agent.OS'], 'Windows_NT' )
 
-  # Build and run tests using Maven and JDK 21
+  # Build and run tests using Maven and JDK 21 (Local WebDriver mode)
   - task: Maven@3
+    condition: eq(variables['useRemoteDriver'], 'false')
     inputs:
       mavenPomFile: 'pom.xml'
       mavenOptions: '-Xmx3072m'
-      # Use the JDK we just installed above; use Path so we can point to the JAVA_HOME variable
       javaHomeOption: 'Path'
       jdkDirectory: '$(JAVA_HOME)'
       goals: 'clean verify'
@@ -114,6 +128,27 @@ steps:
         -Dheadless.mode="$(headless)"
         -Daccess=$(DOOR_ACCESS)
         -Dchrome.userDataDir="$(Agent.TempDirectory)/chrome-profile-$(Agent.Id)-$(Build.BuildId)"
+      publishJUnitResults: true
+      testResultsFiles: '**/surefire-reports/TEST-*.xml'
+
+  # Build and run tests using Maven and JDK 21 (RemoteWebDriver mode)
+  - task: Maven@3
+    condition: eq(variables['useRemoteDriver'], 'true')
+    inputs:
+      mavenPomFile: 'pom.xml'
+      mavenOptions: '-Xmx3072m'
+      javaHomeOption: 'Path'
+      jdkDirectory: '$(JAVA_HOME)'
+      goals: 'clean verify'
+      options: >-
+        -D"cucumber.filter.tags"="$(tag)"
+        -Denvironment="$(browser)"
+        -Dheadless.mode="$(headless)"
+        -Daccess=$(DOOR_ACCESS)
+        -Dchrome.userDataDir="$(Agent.TempDirectory)/chrome-profile-$(Agent.Id)-$(Build.BuildId)"
+        -Dwebdriver.driver=remote
+        -Dwebdriver.remote.driver=$(browser)
+        -Dwebdriver.remote.url=$(remoteDriverUrl)
       publishJUnitResults: true
       testResultsFiles: '**/surefire-reports/TEST-*.xml'
 
@@ -155,4 +190,15 @@ steps:
     condition: and(succeededOrFailed(), eq( variables['Agent.OS'], 'Windows_NT' ))
 
   # (Azure Blob upload step removed)
-
+  - task: QodanaScan@2025
+    inputs:
+      args: -l,jetbrains/qodana-jvm-community:2025.2
+      # When prMode is set to true, Qodana analyzes only the files that have been changed
+      prMode: false,
+      postPrComment: true
+      # Upload Qodana results (SARIF, other artifacts, logs) as an artifact to the job
+      uploadResult: false
+      # quick-fixes available in Ultimate and Ultimate Plus plans
+      pushFixes: 'none'
+    env:
+      QODANA_TOKEN: $(QODANA_TOKEN)

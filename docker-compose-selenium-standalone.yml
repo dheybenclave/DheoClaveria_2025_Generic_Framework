@@ -1,0 +1,57 @@
+version: '3.8'
+
+services:
+  # Standalone Chrome - simplest setup for single browser testing
+  chrome:
+    image: selenium/standalone-chrome:latest
+    container_name: selenium-chrome-standalone
+    ports:
+      - "4444:4444"
+      - "7900:7900"  # noVNC for browser viewing
+    shm_size: 2gb
+    environment:
+      - SE_NODE_MAX_SESSIONS=5
+      - SE_NODE_SESSION_TIMEOUT=300
+      - SE_VNC_NO_PASSWORD=1
+    volumes:
+      - ./target/downloads:/home/seluser/downloads
+    networks:
+      - selenium-grid
+
+  # Standalone Firefox
+  firefox:
+    image: selenium/standalone-firefox:latest
+    container_name: selenium-firefox-standalone
+    ports:
+      - "4445:4444"
+      - "7901:7900"  # noVNC for browser viewing
+    shm_size: 2gb
+    environment:
+      - SE_NODE_MAX_SESSIONS=5
+      - SE_NODE_SESSION_TIMEOUT=300
+      - SE_VNC_NO_PASSWORD=1
+    volumes:
+      - ./target/downloads:/home/seluser/downloads
+    networks:
+      - selenium-grid
+
+  # Standalone Edge
+  edge:
+    image: selenium/standalone-edge:latest
+    container_name: selenium-edge-standalone
+    ports:
+      - "4446:4444"
+      - "7902:7900"  # noVNC for browser viewing
+    shm_size: 2gb
+    environment:
+      - SE_NODE_MAX_SESSIONS=5
+      - SE_NODE_SESSION_TIMEOUT=300
+      - SE_VNC_NO_PASSWORD=1
+    volumes:
+      - ./target/downloads:/home/seluser/downloads
+    networks:
+      - selenium-grid
+
+networks:
+  selenium-grid:
+    driver: bridge
