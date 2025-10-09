@@ -16,8 +16,7 @@ public class BaseClass extends PageObject {
         try {
             // Downloads the appropriate driver for the platform and sets the webdriver system property
             WebDriverManager.chromedriver().setup();
-
-            WebDriverManager.chromedriver().create();
+            WebDriverManager.edgedriver().setup();
 
         } catch (Exception e) {
             logger.warn("WebDriverManager global setup failed: {}", e.getMessage());
