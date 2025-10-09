@@ -22,8 +22,15 @@ apply plugin: 'eclipse'
 apply plugin: 'idea'
 apply plugin: "net.serenity-bdd.serenity-gradle-plugin"
 
-sourceCompatibility = 16
-targetCompatibility = 16
+sourceCompatibility = 21
+targetCompatibility = 21
+
+// Configure Gradle Java toolchain to use Java 21
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(21)
+    }
+}
 
 ext {
     serenity_version = '4.1.12'
