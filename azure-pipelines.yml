@@ -8,12 +8,13 @@ parameters:
   - name: tag
     displayName: Tag
     type: string
-    default: '@CRUD'
+    default: '@UISmoke'
   - name: browser
     displayName: Browser
     values:
       - chrome
       - edge
+      - firefox
     default: chrome
   - name: headless
     displayName: Headless
