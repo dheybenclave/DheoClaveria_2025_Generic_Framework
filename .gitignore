@@ -2,6 +2,7 @@ target/
 build
 out
 .gradle
+.run
 pom.xml.tag
 pom.xml.releaseBackup
 pom.xml.versionsBackup
