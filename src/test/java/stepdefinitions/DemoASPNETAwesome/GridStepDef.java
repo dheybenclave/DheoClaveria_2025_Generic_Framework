@@ -3,14 +3,17 @@ package stepdefinitions.DemoASPNETAwesome;
 import io.cucumber.datatable.DataTable;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Then;
+import net.serenitybdd.annotations.Steps;
 import net.serenitybdd.core.pages.PageComponent;
 import net.serenitybdd.core.pages.WebElementFacade;
 import org.assertj.core.api.AbstractBooleanAssert;
+import org.fluentlenium.core.annotation.Page;
 import org.junit.Assert;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import pages.DemoASPNETAwesome.CommonDemoASPAwesomePage;
 import pages.DemoASPNETAwesome.DemoASPAwesomePage;
+import stepdefinitions.CommonStepDef;
 
 import java.util.List;
 import java.util.Map;
@@ -18,10 +21,12 @@ import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class GridStepDef extends PageComponent {
+public class GridStepDef {
 
-    public CommonDemoASPAwesomePage CommonPage;
-    public DemoASPAwesomePage demoASPAwesemoPage;
+    @Steps
+    CommonStepDef commonStepDef;
+    @Page
+    DemoASPAwesomePage demoASPAwesemoPage;
     public static Logger logger = LoggerFactory.getLogger(Thread.currentThread().getStackTrace()[1].getClassName());
 
     @Then("I verify the grid filter using parent control element")
@@ -57,11 +62,11 @@ public class GridStepDef extends PageComponent {
             if (currentControl != null) {
                 assertThat(currentControl.isVisible()).isTrue();
                 currentControl.typeAndTab(currValue);
-                waitABit(1000);
+                commonStepDef.waitForPageInSecond(1000);
                 Assert.assertEquals(currentControl.getValue(), currValue);
             }
         }
-        waitABit(2000);
+        commonStepDef.waitForPageInSecond(2000);
     }
 
     public void selectFilterCountry(String selectCountry) {
@@ -77,7 +82,7 @@ public class GridStepDef extends PageComponent {
 
         assertThat(actualResultList.size()).isEqualTo(expectedResultList.size() - 1);
         Assert.assertEquals(String.format("The Expected(%s) and Actual(%s) Result size in Grid List is not the same ",
-                expectedResultList.size() - 1, actualResultList.size()),
+                        expectedResultList.size() - 1, actualResultList.size()),
                 expectedResultList.size() - 1, actualResultList.size());
 
 

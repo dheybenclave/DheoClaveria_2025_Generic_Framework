@@ -2,7 +2,9 @@ package stepdefinitions.ProDinnerASPNetAwesome;
 
 import io.cucumber.datatable.DataTable;
 import io.cucumber.java.en.Then;
+import net.serenitybdd.annotations.Steps;
 import net.serenitybdd.core.pages.PageComponent;
+import org.fluentlenium.core.annotation.Page;
 import pages.ProDinnerPage.MealPage;
 import stepdefinitions.CommonStepDef;
 import utils.Utilities;
@@ -10,10 +12,13 @@ import utils.Utilities;
 import java.util.List;
 import java.util.Map;
 
-public class MealPageStepDef extends PageComponent {
+public class MealPageStepDef {
 
+    @Steps
     CommonStepDef commonStepDef;
+    @Page
     MealPage mealPage;
+
     Utilities utils = new Utilities();
 
     @Then("validate and verify a meal created using the following :$")

@@ -4,6 +4,8 @@ import io.cucumber.datatable.DataTable;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.When;
+import net.serenitybdd.annotations.Step;
+import net.serenitybdd.annotations.Steps;
 import net.serenitybdd.core.pages.PageComponent;
 import net.serenitybdd.core.pages.WebElementFacade;
 import net.serenitybdd.model.environment.EnvironmentSpecificConfiguration;
@@ -87,6 +89,10 @@ public class CommonStepDef extends PageComponent {
         this.getDriver().get(pageUrl);
     }
 
+    public void waitForPageInSecond(int timeInMilliseconds) {
+        testStep(String.format("Wait For Page In Second(s) %s", timeInMilliseconds));
+        waitABit(timeInMilliseconds);
+    }
 
     public void generatedSwitchHandler() {
         testStep(String.format("Generated Switch Handler"));
@@ -235,8 +241,10 @@ public class CommonStepDef extends PageComponent {
         clickTextWithParentSelectorIfExist("//div[@id='onetrust-button-group-parent']", "Accept all");
     }
 
+    @Step
     public void testStep(String message) {
-        logger.info(String.format("%s : %s", Thread.currentThread().getStackTrace()[1].getMethodName(), message));
+        logger.info(" : {}", message);
+        logger.debug(" : {}", message);
     }
 
 }

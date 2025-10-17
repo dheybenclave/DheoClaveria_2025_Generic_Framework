@@ -2,10 +2,12 @@ package stepdefinitions.ProDinnerASPNetAwesome;
 
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
+import net.serenitybdd.annotations.Steps;
 import net.serenitybdd.annotations.WhenPageOpens;
 import net.serenitybdd.core.pages.PageComponent;
 import net.serenitybdd.screenplay.Actor;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
+import org.fluentlenium.core.annotation.Page;
 import pages.ProDinnerPage.CommonProDinnerPage;
 import pages.ProDinnerPage.SignInPage;
 import stepdefinitions.CommonStepDef;
@@ -18,18 +20,21 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
-public class LoginStepDef extends PageComponent {
+public class LoginStepDef {
     public static Logger logger = LoggerFactory.getLogger(Thread.currentThread().getStackTrace()[1].getClassName());
 
+    @Steps
     CommonStepDef commonStepDef;
+    @Page
     CommonProDinnerPage commonPage;
+    @Page
     SignInPage signInPage;
 
     String _username, _password = "";
 
     @WhenPageOpens
     public void maximizeScreen() {
-        getDriver().manage().window().maximize();
+        commonStepDef.getDriver().manage().window().maximize();
     }
 
     @Given("{} is login in {} using {}")
@@ -43,7 +48,7 @@ public class LoginStepDef extends PageComponent {
         commonStepDef.enterText(signInPage.TXT_USERNAME(), _username, 2000);
         commonStepDef.enterText(signInPage.TXT_PASSWORD(), _password, 2000);
         commonStepDef.clickElement(signInPage.BTN_SIGN_IN());  //clickOn(signInPage.BTN_SIGN_IN);
-        waitABit(2000);
+        commonStepDef.waitForPageInSecond(2000);
         commonStepDef.verifyVisibilityofElement(commonPage.LNK_SIGN_OUT());
 
     }

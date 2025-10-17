@@ -1,5 +1,6 @@
 package utils;
 
+import io.cucumber.java.AfterAll;
 import io.cucumber.java.BeforeAll;
 import io.github.bonigarcia.wdm.WebDriverManager;
 import net.thucydides.core.pages.PageObject;
@@ -16,10 +17,15 @@ public class BaseClass extends PageObject {
         try {
             // Downloads the appropriate driver for the platform and sets the webdriver system property
             WebDriverManager.chromedriver().setup();
-//            WebDriverManager.edgedriver().setup();
+            WebDriverManager.edgedriver().setup();
 
         } catch (Exception e) {
             logger.warn("WebDriverManager global setup failed: {}", e.getMessage());
         }
+    }
+
+    @AfterAll
+    public static void end(){
+
     }
 }
