@@ -5,7 +5,7 @@
     <option name="GLUE" value="stepdefinitions net.serenitybdd.cucumber.actors" />
     <option name="MAIN_CLASS_NAME" value="io.cucumber.core.cli.Main" />
     <module name="DClaveria_GenericTesting" />
-    <option name="PROGRAM_PARAMETERS" value="--plugin org.jetbrains.plugins.cucumber.java.run.CucumberJvm5SMFormatter --tags &quot;@CRUD&quot;" />
+    <option name="PROGRAM_PARAMETERS" value="--plugin org.jetbrains.plugins.cucumber.java.run.CucumberJvm5SMFormatter --tags &quot;@Grid_Scenario_1&quot;" />
     <shortenClasspath name="NONE" />
     <option name="SUGGESTED_NAME" value="Feature: ValidateAndVerifyContactUsPage" />
     <option name="WORKING_DIRECTORY" value="$MODULE_WORKING_DIR$" />

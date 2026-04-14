@@ -1,11 +1,8 @@
 package stepdefinitions.ProDinnerASPNetAwesome;
 
-import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import net.serenitybdd.annotations.Steps;
 import net.serenitybdd.annotations.WhenPageOpens;
-import net.serenitybdd.core.pages.PageComponent;
-import net.serenitybdd.screenplay.Actor;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.fluentlenium.core.annotation.Page;
 import pages.ProDinnerPage.CommonProDinnerPage;
@@ -14,10 +11,8 @@ import stepdefinitions.CommonStepDef;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import utils.ExcelReader;
-import utils.UserCredentials;
 
 import java.io.IOException;
-import java.util.List;
 import java.util.Map;
 
 public class LoginStepDef {

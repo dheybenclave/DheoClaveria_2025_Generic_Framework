@@ -1,0 +1,41 @@
+{
+  "gridFiltering": {
+    "tracyHotBeverageFilter": {
+      "filters": [
+        {"field": "person", "value": "Tracy"},
+        {"field": "food", "value": "Hot Beverage"},
+        {"field": "country", "value": "any country"}
+      ],
+      "expectedResults": [
+        {"Id": "2085", "Person": "Tracy", "Food": "Hot Beverage", "Country": "Sylvanaar", "Date": "1/25/2018", "Location": "Diner", "Chef": "Chronos Timpus"},
+        {"Id": "1609", "Person": "Tracy", "Food": "Hot Beverage", "Country": "Elwynn Forest", "Date": "9/7/2011", "Location": "Visit", "Chef": "Pepper Tomato"},
+        {"Id": "1221", "Person": "Tracy", "Food": "Hot Beverage", "Country": "Orgrimmar", "Date": "8/1/2016", "Location": "University", "Chef": "Cheyenne Goldblum"}
+      ]
+    },
+
+    "jenniferApplePieFilter": {
+      "filters": [
+        {"field": "person", "value": "Jennifer"},
+        {"field": "food", "value": "Apple Pie"}
+      ],
+      "expectedResults": [
+        {"Id": "1837", "Person": "Jennifer", "Food": "Apple Pie", "Country": "Feralas", "Date": "6/27/2011", "Location": "University", "Chef": "Omu Man"}
+      ]
+    }
+  },
+  "createMeal": {
+    "testMeals": [
+      {"Name": "TestSerenity", "Comments": "Dhy_testing"},
+      {"Name": "TestingCucumber", "Comments": "Testing_Automation"}
+    ],
+    "page": "PRODINNERASPNETAWESOME",
+    "role": "ProDinnerAdmin"
+  },
+  "formPageTesting": {
+    "pages": [
+      "DEMOASPAWESOME",
+      "WIKI",
+      "PRODINNERASPNETAWESOME"
+    ]
+  }
+}

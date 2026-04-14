@@ -2,9 +2,10 @@ package stepdefinitions.DemoASPNETAwesome;
 
 import io.cucumber.datatable.DataTable;
 import io.cucumber.java.en.And;
+import io.cucumber.java.Before;
+import io.cucumber.java.Scenario;
 import io.cucumber.java.en.Then;
 import net.serenitybdd.annotations.Steps;
-import net.serenitybdd.core.pages.PageComponent;
 import net.serenitybdd.core.pages.WebElementFacade;
 import org.assertj.core.api.AbstractBooleanAssert;
 import org.fluentlenium.core.annotation.Page;
@@ -14,9 +15,13 @@ import org.slf4j.LoggerFactory;
 import pages.DemoASPNETAwesome.CommonDemoASPAwesomePage;
 import pages.DemoASPNETAwesome.DemoASPAwesomePage;
 import stepdefinitions.CommonStepDef;
+import utils.JsonReader;
 
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -40,7 +45,6 @@ public class GridStepDef {
     public void filterGridFilteringParentControl(DataTable dataTable) {
 
         List<Map<String, String>> dataTableList = dataTable.asMaps(String.class, String.class);
-        logger.info(String.format("dataTableList %s", dataTableList));
 
         for (Map<String, String> e : dataTableList) {
             WebElementFacade currentControl = null;
@@ -78,17 +82,20 @@ public class GridStepDef {
     @Then("^I validate the grid result using the following :$")
     public void iValidateTheGridResultUsingTheFollowing(DataTable dataTable) {
         List<String> actualResultList = getGridResult();
-        List<List<String>> expectedResultList = dataTable.asLists();
+        // Skips the first row (header) and takes everything from index 1 to the end
+        List<List<String>> expectedResultList = dataTable.asLists().subList(1, dataTable.asLists().size());
+        logger.info(String.format("Expected Result List from DataTable: %s", expectedResultList));
+        logger.info(String.format("Actual Result List from DataTable: %s", actualResultList));
 
-        assertThat(actualResultList.size()).isEqualTo(expectedResultList.size() - 1);
-        Assert.assertEquals(String.format("The Expected(%s) and Actual(%s) Result size in Grid List is not the same ",
-                        expectedResultList.size() - 1, actualResultList.size()),
-                expectedResultList.size() - 1, actualResultList.size());
-
+        assertThat(actualResultList.size()).isEqualTo(expectedResultList.size());
+        Assert.assertEquals(
+                String.format("The Expected(%s) and Actual(%s) Result size in Grid List is not the same ", expectedResultList.size(), actualResultList.size()),
+                expectedResultList.size(),
+                actualResultList.size());
 
         for (int i = 0; i < actualResultList.size(); i++) {
 
-            String currExpectedList = expectedResultList.get(i + 1).toString().replaceAll("\\[|\\]|,", "");
+            String currExpectedList = expectedResultList.get(i).toString().replaceAll("\\[|\\]|,", "");
             String currActualList = actualResultList.get(i);
             logger.info(String.format("currExpectedList %s | currActualList %s", currExpectedList, actualResultList.get(i)));
             assertThat(actualResultList).contains(currExpectedList);
@@ -97,8 +104,61 @@ public class GridStepDef {
     }
 
     public List<String> getGridResult() {
+        logger.info("Getting grid results from the page...");
         return demoASPAwesemoPage.FILER_GRID_USING_PARENT_CONTROL_GRID_ROW().stream()
                 .map(WebElementFacade::getText)
                 .collect(Collectors.toList());
+    }
+
+    @Then("^I validate the grid result :$")
+    public void iValidateTheGridResultWithDataTable(DataTable dataTable) throws IOException {
+        logger.info("Validating grid results against expected results from JSON based on filters...");
+        List<Map<String, String>> filters = dataTable.asMaps(String.class, String.class);
+
+        List<String> actualResultList = getGridResult();
+        List<String> expectedRows = getExpectedGridResultsFromJson(filters);
+
+        logger.info(String.format("Expected Rows from JSON: %s", expectedRows));
+        logger.info(String.format("Actual Rows from Grid: %s", actualResultList));
+
+        Assert.assertTrue(
+                String.format("Grid result mismatch for filters %s. Expected: %s | Actual: %s", filters, expectedRows, actualResultList),
+                isGridResultMatch(actualResultList, expectedRows)
+        );
+    }
+
+    private List<String> getExpectedGridResultsFromJson(List<Map<String, String>> filters) throws IOException {
+        logger.info(String.format("Reading expected grid results from JSON for filters: %s", filters));
+        String filePath = System.getProperty("user.dir") + "/src/test/resources/testData/json/gridFilter.json";
+        JsonReader jsonReader = new JsonReader();
+        List<Map<String, Object>> expectedResults = jsonReader.getGridExpectedResults(filePath, filters);
+        return expectedResults.stream().map(this::buildGridRowText).collect(Collectors.toList());
+    }
+
+    private String buildGridRowText(Map<String, Object> row) {
+        logger.info(String.format("Building grid row text from JSON row: %s", row));
+        return String.format("%s %s %s %s %s %s %s",
+                        row.get("Id"),
+                        row.get("Person"),
+                        row.get("Food"),
+                        row.get("Country"),
+                        row.get("Date"),
+                        row.get("Location"),
+                        row.get("Chef"))
+                .replaceAll("\\s+", " ")
+                .trim();
+    }
+
+    private boolean isGridResultMatch(List<String> actual, List<String> expected) {
+        logger.info(String.format("Comparing actual grid results with expected results. Actual: %s | Expected: %s", actual, expected));
+        if (actual.size() != expected.size()) {
+            return false;
+        }
+
+        List<String> normalizedActual = actual.stream()
+                .map(value -> value.replaceAll("\\s+", " ").trim())
+                .collect(Collectors.toList());
+
+        return expected.stream().allMatch(normalizedActual::contains);
     }
 }
