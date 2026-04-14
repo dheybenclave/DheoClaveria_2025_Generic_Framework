@@ -54,7 +54,12 @@ jobs:
           if [[ -z "$ENV_BROWSER" ]]; then
             ENV_BROWSER="chrome"
           fi
-          mvn clean verify -Dcucumber.filter.tags="${TAG_FILTER}" -Denvironment="${ENV_BROWSER}"
+          mvn clean verify \
+            -Dcucumber.filter.tags="${TAG_FILTER}" \
+            -Denvironment="${ENV_BROWSER}" \
+            -Dheadless.mode=true \
+            -Dwebdriver.chrome.args="--headless=new" \
+            --no-transfer-progress
 
       - name: Upload Serenity Reports
         if: always()
