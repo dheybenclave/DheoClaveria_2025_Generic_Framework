@@ -49,12 +49,18 @@ jobs:
 
       - name: Build and Run Tests
         run: |
-          # Determine execution mode
-          if [[ "${{ inputs.run_parallel }}" == "true" || "${{ github.event_name }}" == "push" ]]; then
-            mvn clean verify -Dcucumber.filter.tags="${{ inputs.test_filter }}"
+          # Build tags argument - use @UISmoke as default if empty
+          if [[ -z "${{ inputs.test_filter }}" ]]; then
+            TAG_FILTER="@UISmoke"
           else
-            mvn clean verify -Dcucumber.filter.tags="${{ inputs.test_filter }}"
+            TAG_FILTER="${{ inputs.test_filter }}"
           fi
+          # Use environment from input or default to chrome
+          ENV_BROWSER=${{ inputs.environment }}
+          if [[ -z "$ENV_BROWSER" ]]; then
+            ENV_BROWSER="chrome"
+          fi
+          mvn clean verify -Dcucumber.filter.tags="${TAG_FILTER}" -Denvironment="${ENV_BROWSER}"
         env:
           LIST_OF_CREDENTIALS: ${{ secrets.LIST_OF_CREDENTIALS }}
 
