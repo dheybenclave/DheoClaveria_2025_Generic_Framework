@@ -14,4 +14,8 @@ public class CommonDemoASPAwesomePage extends UIInteractions {
     public WebElementFacade PAGE_CONTROL_LABEL(String labelText) {
         return $(String.format("//*[contains(text(),'%s')]", labelText));
     }
+
+    public WebElementFacade LINK_PRIVACY_POLICY() {
+        return $("//a[contains(@href,'PrivacyPolicy')]");
+    }
 }

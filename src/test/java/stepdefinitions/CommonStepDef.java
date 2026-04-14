@@ -35,11 +35,11 @@ public class CommonStepDef extends PageComponent {
     public Set<String> s1;
     public Iterator<String> i1;
 
-
     @Given("Tester is navigating in {}")
     public void navigatePage(String page) {
         this.thePage(page);
         Ensure.thatTheCurrentPage().currentUrl();
+        clickElementIfExist(commonDEMOAWESOMEPage.LINK_PRIVACY_POLICY());
     }
 
     @Given("I go to {} > {} > {} modules")
@@ -60,7 +60,8 @@ public class CommonStepDef extends PageComponent {
             testStep(String.format("the element %s in the page", subPageItem));
             clickElement(commonDEMOAWESOMEPage.NAVIGATE_MODULE_SUB(subPageItem));
         }
-
+        
+     clickElementIfExist(commonDEMOAWESOMEPage.LINK_PRIVACY_POLICY());
     }
 
     @When("I verify the element navigation search box in the page")
@@ -81,7 +82,8 @@ public class CommonStepDef extends PageComponent {
     public void thePage(String pageName) {
         String pageUrl = EnvironmentSpecificConfiguration.from(SystemEnvironmentVariables.currentEnvironmentVariables())
                 .getOptionalProperty("pages." + pageName.toLowerCase())
-                .orElse(SystemEnvironmentVariables.currentEnvironmentVariables().getProperty("pages." + pageName.toLowerCase()));
+                .orElse(SystemEnvironmentVariables.currentEnvironmentVariables()
+                        .getProperty("pages." + pageName.toLowerCase()));
         if (pageUrl == null) {
             throw new UnknownPageException("No page defined with the name '" + pageUrl + "'");
         }
@@ -142,6 +144,7 @@ public class CommonStepDef extends PageComponent {
         element.click();
     }
 
+
     public void clickElementIfExist(WebElementFacade element) {
         testStep(String.format("Click for Element if Exist '%s'", element));
 
@@ -178,13 +181,11 @@ public class CommonStepDef extends PageComponent {
         waitABit(waitForMilliSec);
     }
 
-
     public void setInputValue(WebElementFacade element, String value, int waitForMilliSec) {
         testStep(String.format("Set Value '%s' with Value %s", element, value));
         this.setAttibute(element, "value", value, waitForMilliSec);
         waitABit(waitForMilliSec);
     }
-
 
     public void NavigateToUIPage(WebElementFacade element) {
         testStep(String.format("Navigate to : '%s'", element));
@@ -205,7 +206,6 @@ public class CommonStepDef extends PageComponent {
             verifyVisibilityofElement(commonPage.LBL_FIELD_WITH_PARENT_SELECTOR(parentSelector, currText));
         }
     }
-
 
     public void CollapaseMenu(WebElementFacade element, String identifierValue) {
         testStep(String.format("Collapse Menu : '%s'", element));
@@ -234,7 +234,6 @@ public class CommonStepDef extends PageComponent {
         }
         waitABit(2000);
     }
-
 
     public void AcceptAllCookiesPage() {
         testStep("AccepAllCookiesPage");
