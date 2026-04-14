@@ -7,13 +7,8 @@ on:
     branches: [ master, main ]
   workflow_dispatch:
     inputs:
-      run_parallel:
-        description: 'Run tests in parallel?'
-        required: true
-        type: boolean
-        default: false
       test_filter:
-        description: 'Run specific tag (e.g., @smoke)'
+        description: 'Run specific tag (e.g., @UISmoke)'
         required: false
         default: ''
       environment:
@@ -24,10 +19,6 @@ on:
 jobs:
   automation-suite:
     runs-on: ubuntu-latest
-    env:
-      BASE_URL: ${{ vars.BASE_URL || '' }}
-      HEADLESS: "true"
-      ENVIRONMENT: ${{ inputs.environment || 'chrome' }}
 
     steps:
       - uses: actions/checkout@v4
@@ -47,22 +38,23 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-maven-
 
+      - name: Install Chrome Browser
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y google-chrome-stable
+
       - name: Build and Run Tests
         run: |
-          # Build tags argument - use @UISmoke as default if empty
           if [[ -z "${{ inputs.test_filter }}" ]]; then
             TAG_FILTER="@UISmoke"
           else
             TAG_FILTER="${{ inputs.test_filter }}"
           fi
-          # Use environment from input or default to chrome
           ENV_BROWSER=${{ inputs.environment }}
           if [[ -z "$ENV_BROWSER" ]]; then
             ENV_BROWSER="chrome"
           fi
           mvn clean verify -Dcucumber.filter.tags="${TAG_FILTER}" -Denvironment="${ENV_BROWSER}"
-        env:
-          LIST_OF_CREDENTIALS: ${{ secrets.LIST_OF_CREDENTIALS }}
 
       - name: Upload Serenity Reports
         if: always()
@@ -81,4 +73,4 @@ jobs:
           name: timeline-report
           path: |
             build/test-results/timeline/
-          retention-days: 7        
+          retention-days: 7
