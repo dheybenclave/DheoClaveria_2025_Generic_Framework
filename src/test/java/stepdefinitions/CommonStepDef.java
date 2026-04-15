@@ -39,6 +39,7 @@ public class CommonStepDef extends PageComponent {
     public void navigatePage(String page) {
         this.thePage(page);
         Ensure.thatTheCurrentPage().currentUrl();
+        AcceptAllCookiesPage();
         clickElementIfExist(commonDEMOAWESOMEPage.LINK_PRIVACY_POLICY());
     }
 
@@ -60,8 +61,9 @@ public class CommonStepDef extends PageComponent {
             testStep(String.format("the element %s in the page", subPageItem));
             clickElement(commonDEMOAWESOMEPage.NAVIGATE_MODULE_SUB(subPageItem));
         }
-        
-     clickElementIfExist(commonDEMOAWESOMEPage.LINK_PRIVACY_POLICY());
+
+        AcceptAllCookiesPage();
+        clickElementIfExist(commonDEMOAWESOMEPage.LINK_PRIVACY_POLICY());
     }
 
     @When("I verify the element navigation search box in the page")
@@ -143,7 +145,6 @@ public class CommonStepDef extends PageComponent {
         waitABit(2000);
         element.click();
     }
-
 
     public void clickElementIfExist(WebElementFacade element) {
         testStep(String.format("Click for Element if Exist '%s'", element));
@@ -238,7 +239,10 @@ public class CommonStepDef extends PageComponent {
     public void AcceptAllCookiesPage() {
         testStep("AccepAllCookiesPage");
         clickTextWithParentSelectorIfExist("//div[@id='onetrust-button-group-parent']", "Accept all");
+        clickElementIfExist(commonPage.LBL_FIELD("Accept all"));
     }
+
+
 
     @Step
     public void testStep(String message) {
