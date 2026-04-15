@@ -39,8 +39,9 @@ public class CommonStepDef extends PageComponent {
     public void navigatePage(String page) {
         this.thePage(page);
         Ensure.thatTheCurrentPage().currentUrl();
-        AcceptAllCookiesPage();
-        clickElementIfExist(commonDEMOAWESOMEPage.LINK_PRIVACY_POLICY());
+        
+        dismissCookieBanner();
+
     }
 
     @Given("I go to {} > {} > {} modules")
@@ -61,9 +62,8 @@ public class CommonStepDef extends PageComponent {
             testStep(String.format("the element %s in the page", subPageItem));
             clickElement(commonDEMOAWESOMEPage.NAVIGATE_MODULE_SUB(subPageItem));
         }
+        dismissCookieBanner();
 
-        AcceptAllCookiesPage();
-        clickElementIfExist(commonDEMOAWESOMEPage.LINK_PRIVACY_POLICY());
     }
 
     @When("I verify the element navigation search box in the page")
@@ -236,13 +236,25 @@ public class CommonStepDef extends PageComponent {
         waitABit(2000);
     }
 
-    public void AcceptAllCookiesPage() {
+    public void acceptAllCookiesPage() {
         testStep("AccepAllCookiesPage");
         clickTextWithParentSelectorIfExist("//div[@id='onetrust-button-group-parent']", "Accept all");
         clickElementIfExist(commonPage.LBL_FIELD("Accept all"));
     }
 
+    public void dismissCookieBanner() {
+        testStep("Dismissing cookie banner if present");
+        try {
 
+            if (commonDEMOAWESOMEPage.BTN_COOKIE_PRIVACY_POLICY().isVisible()) {
+                JavascriptExecutor js = (JavascriptExecutor) this.getDriver();
+                js.executeScript("arguments[0].style.display='none';", commonDEMOAWESOMEPage.BTN_COOKIE_PRIVACY_POLICY().getWrappedElement());
+                waitABit(500);
+            }
+        } catch (Exception e) {
+            testStep("Cookie banner not found or already dismissed");
+        }
+    }
 
     @Step
     public void testStep(String message) {

@@ -15,7 +15,7 @@ public class CommonDemoASPAwesomePage extends UIInteractions {
         return $(String.format("//*[contains(text(),'%s')]", labelText));
     }
 
-    public WebElementFacade LINK_PRIVACY_POLICY() {
-        return $("//a[contains(@href,'PrivacyPolicy')]");
+    public WebElementFacade BTN_COOKIE_PRIVACY_POLICY() {
+        return $("//button[@id='btnCookie']");
     }
 }
