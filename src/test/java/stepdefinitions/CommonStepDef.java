@@ -46,23 +46,30 @@ public class CommonStepDef extends PageComponent {
 
     @Given("I go to {} > {} > {} modules")
     public void iNavigateToSubGroup(String group, String subPage, String subPageItem) {
-
+        waitABit(2000);
+        dismissCookieBanner();
+        
         if (!group.isEmpty()) {
             testStep(String.format("the element %s in the page", group));
-            clickElement(commonDEMOAWESOMEPage.NAVIGATE_MODULE_PARENT(group));
-            CollapaseMenu(commonDEMOAWESOMEPage.NAVIGATE_MODULE_PARENT(group));
-
+            WebElementFacade groupElement = commonDEMOAWESOMEPage.NAVIGATE_MODULE_PARENT(group);
+            groupElement.waitUntilVisible().withTimeoutOf(15, java.util.concurrent.TimeUnit.SECONDS);
+            clickElement(groupElement);
+            CollapaseMenu(groupElement);
         }
         if (!subPage.isEmpty()) {
             testStep(String.format("the element %s in the page", subPage));
-            clickElement(commonDEMOAWESOMEPage.NAVIGATE_MODULE_SUB(subPage));
-            CollapaseMenu(commonDEMOAWESOMEPage.NAVIGATE_MODULE_SUB(subPage));
+            WebElementFacade subElement = commonDEMOAWESOMEPage.NAVIGATE_MODULE_SUB(subPage);
+            subElement.waitUntilVisible().withTimeoutOf(15, java.util.concurrent.TimeUnit.SECONDS);
+            clickElement(subElement);
+            CollapaseMenu(subElement);
         }
         if (!subPageItem.isEmpty()) {
             testStep(String.format("the element %s in the page", subPageItem));
-            clickElement(commonDEMOAWESOMEPage.NAVIGATE_MODULE_SUB(subPageItem));
+            WebElementFacade itemElement = commonDEMOAWESOMEPage.NAVIGATE_MODULE_SUB(subPageItem);
+            itemElement.waitUntilVisible().withTimeoutOf(15, java.util.concurrent.TimeUnit.SECONDS);
+            clickElement(itemElement);
         }
-        dismissCookieBanner();
+
 
     }
 
@@ -142,8 +149,19 @@ public class CommonStepDef extends PageComponent {
     public void clickElement(WebElementFacade element) {
         testStep(String.format("Click for Element '%s'", element));
         verifyVisibilityofElement(element);
-        waitABit(2000);
-        element.click();
+        waitABit(3000);
+
+        try {
+            JavascriptExecutor js = (JavascriptExecutor) this.getDriver();
+            js.executeScript("arguments[0].scrollIntoView(true);", element.getWrappedElement());
+            waitABit(500);
+
+            element.click();
+        } catch (org.openqa.selenium.ElementClickInterceptedException e) {
+            testStep("Click intercepted, using JavaScript executor");
+            JavascriptExecutor js = (JavascriptExecutor) this.getDriver();
+            js.executeScript("arguments[0].click();", element.getWrappedElement());
+        }
     }
 
     public void clickElementIfExist(WebElementFacade element) {
@@ -245,10 +263,17 @@ public class CommonStepDef extends PageComponent {
     public void dismissCookieBanner() {
         testStep("Dismissing cookie banner if present");
         try {
+            JavascriptExecutor js = (JavascriptExecutor) this.getDriver();
+
+            try {
+                js.executeScript("document.querySelectorAll('a[href*=\"PrivacyPolicy\"]').forEach(el => el.style.display='none');");
+            } catch (Exception e) {
+                testStep("Privacy policy link not found");
+            }
 
             if (commonDEMOAWESOMEPage.BTN_COOKIE_PRIVACY_POLICY().isVisible()) {
-                JavascriptExecutor js = (JavascriptExecutor) this.getDriver();
-                js.executeScript("arguments[0].style.display='none';", commonDEMOAWESOMEPage.BTN_COOKIE_PRIVACY_POLICY().getWrappedElement());
+                js.executeScript("arguments[0].style.display='none';",
+                    commonDEMOAWESOMEPage.BTN_COOKIE_PRIVACY_POLICY().getWrappedElement());
                 waitABit(500);
             }
         } catch (Exception e) {

@@ -2,31 +2,248 @@
   "gridFiltering": {
     "tracyHotBeverageFilter": {
       "filters": [
-        {"field": "person", "value": "Tracy"},
-        {"field": "food", "value": "Hot Beverage"},
-        {"field": "country", "value": "any country"}
+        {
+          "field": "person",
+          "value": "Tracy"
+        },
+        {
+          "field": "food",
+          "value": "Hot Beverage"
+        },
+        {
+          "field": "country",
+          "value": "any country"
+        }
       ],
       "expectedResults": [
-        {"Id": "2085", "Person": "Tracy", "Food": "Hot Beverage", "Country": "Sylvanaar", "Date": "1/25/2018", "Location": "Diner", "Chef": "Chronos Timpus"},
-        {"Id": "1609", "Person": "Tracy", "Food": "Hot Beverage", "Country": "Elwynn Forest", "Date": "9/7/2011", "Location": "Visit", "Chef": "Pepper Tomato"},
-        {"Id": "1221", "Person": "Tracy", "Food": "Hot Beverage", "Country": "Orgrimmar", "Date": "8/1/2016", "Location": "University", "Chef": "Cheyenne Goldblum"}
+        {
+          "Id": "2085",
+          "Person": "Tracy",
+          "Food": "Hot Beverage",
+          "Country": "Sylvanaar",
+          "Date": "1/25/2018",
+          "Location": "Diner",
+          "Chef": "Chronos Timpus"
+        },
+        {
+          "Id": "1609",
+          "Person": "Tracy",
+          "Food": "Hot Beverage",
+          "Country": "Elwynn Forest",
+          "Date": "9/7/2011",
+          "Location": "Visit",
+          "Chef": "Pepper Tomato"
+        },
+        {
+          "Id": "1221",
+          "Person": "Tracy",
+          "Food": "Hot Beverage",
+          "Country": "Orgrimmar",
+          "Date": "8/1/2016",
+          "Location": "University",
+          "Chef": "Cheyenne Goldblum"
+        }
       ]
     },
-
-    "jenniferApplePieFilter": {
+"jenniferApplePieFilter": {
       "filters": [
-        {"field": "person", "value": "Jennifer"},
-        {"field": "food", "value": "Apple Pie"}
+        {
+          "field": "person",
+          "value": "Jennifer"
+        },
+        {
+          "field": "food",
+          "value": "Apple Pie"
+        }
       ],
       "expectedResults": [
-        {"Id": "1837", "Person": "Jennifer", "Food": "Apple Pie", "Country": "Feralas", "Date": "6/27/2011", "Location": "University", "Chef": "Omu Man"}
+        {
+          "Id": "2037",
+          "Person": "Jennifer",
+          "Food": "Apple Pie",
+          "Country": "Feralas",
+          "Date": "6/27/2011",
+          "Location": "University",
+          "Chef": "Omu Man"
+        }
+      ]
+    },
+    "tracyBananaFilter": {
+      "filters": [
+        {
+          "field": "person",
+          "value": "Tracy"
+        },
+        {
+          "field": "food",
+          "value": "Banana"
+        }
+      ],
+      "expectedResults": [
+        {
+          "Id": "2085",
+          "Person": "Tracy",
+          "Food": "Banana",
+          "Country": "Loch Modan",
+          "Date": "7/7/2022",
+          "Location": "Diner",
+          "Chef": "Casse Croute"
+        },
+        {
+          "Id": "1609",
+          "Person": "Tracy",
+          "Food": "Banana",
+          "Country": "Orgrimmar",
+          "Date": "7/17/2012",
+          "Location": "Visit",
+          "Chef": "Omu Man"
+        },
+        {
+          "Id": "1221",
+          "Person": "Tracy",
+          "Food": "Banana",
+          "Country": "Winterspring",
+          "Date": "6/9/2017",
+          "Location": "Home",
+          "Chef": "Bruce Nolan"
+        }
+      ]
+    },
+    "jenniferPizzaFilter": {
+      "filters": [
+        {
+          "field": "person",
+          "value": "Jennifer"
+        },
+        {
+          "field": "food",
+          "value": "Pizza"
+        }
+      ],
+      "expectedResults": [
+        {
+          "Id": "2037",
+          "Person": "Jennifer",
+          "Food": "Pizza",
+          "Country": "Carpana",
+          "Date": "7/3/2020",
+          "Location": "University",
+          "Chef": "Demeter Harvest"
+        }
+      ]
+    },
+    "tracyDuplicatedBananaFilter": {
+      "filters": [
+        {
+          "field": "person",
+          "value": "Tracy"
+        },
+        {
+          "field": "person",
+          "value": "Tracy"
+        },
+        {
+          "field": "food",
+          "value": "Banana"
+        }
+      ],
+      "expectedResults": [
+        {
+          "Id": "3509",
+          "Person": "Tracy",
+          "Food": "Banana",
+          "Country": "Loch Modan",
+          "Date": "7/7/2022",
+          "Location": "Diner",
+          "Chef": "Casse Croute"
+        },
+        {
+          "Id": "3297",
+          "Person": "Tracy",
+          "Food": "Banana",
+          "Country": "Orgrimmar",
+          "Date": "7/17/2012",
+          "Location": "Visit",
+          "Chef": "Omu Man"
+        },
+        {
+          "Id": "2893",
+          "Person": "Tracy",
+          "Food": "Banana",
+          "Country": "Winterspring",
+          "Date": "6/9/2017",
+          "Location": "Home",
+          "Chef": "Bruce Nolan"
+        }
+      ]
+    },
+    "tracySingleBananaFilter": {
+      "filters": [
+        {
+          "field": "person",
+          "value": "Tracy"
+        },
+        {
+          "field": "food",
+          "value": "Banana"
+        }
+      ],
+      "expectedResults": [
+        {
+          "Id": "3509",
+          "Person": "Tracy",
+          "Food": "Banana",
+          "Country": "Loch Modan",
+          "Date": "7/7/2022",
+          "Location": "Diner",
+          "Chef": "Casse Croute"
+        },
+        {
+          "Id": "3297",
+          "Person": "Tracy",
+          "Food": "Banana",
+          "Country": "Orgrimmar",
+          "Date": "7/17/2012",
+          "Location": "Visit",
+          "Chef": "Omu Man"
+        },
+        {
+          "Id": "2893",
+          "Person": "Tracy",
+          "Food": "Banana",
+          "Country": "Winterspring",
+          "Date": "6/9/2017",
+          "Location": "Home",
+          "Chef": "Bruce Nolan"
+        }
+      ]
+    }
+  }
+}
+      ],
+      "expectedResults": [
+        {
+          "Id": "1837",
+          "Person": "Jennifer",
+          "Food": "Apple Pie",
+          "Country": "Feralas",
+          "Date": "6/27/2011",
+          "Location": "University",
+          "Chef": "Omu Man"
+        }
       ]
     }
   },
   "createMeal": {
     "testMeals": [
-      {"Name": "TestSerenity", "Comments": "Dhy_testing"},
-      {"Name": "TestingCucumber", "Comments": "Testing_Automation"}
+      {
+        "Name": "TestSerenity",
+        "Comments": "Dhy_testing"
+      },
+      {
+        "Name": "TestingCucumber",
+        "Comments": "Testing_Automation"
+      }
     ],
     "page": "PRODINNERASPNETAWESOME",
     "role": "ProDinnerAdmin"
