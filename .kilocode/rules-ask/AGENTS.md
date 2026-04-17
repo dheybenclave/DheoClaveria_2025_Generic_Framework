@@ -33,3 +33,7 @@ src/test/resources/
 - [AGENTS.md](AGENTS.md) - Agent guidance (concise)
 - [CODE_STANDARDS.md](CODE_STANDARDS.md) - Full coding standards
 - [QUICK_START.md](QUICK_START.md) - Quick start guide
+
+
+## Code Standards & Best Practices Guide
+- See `CODE_STANDARDS.md`

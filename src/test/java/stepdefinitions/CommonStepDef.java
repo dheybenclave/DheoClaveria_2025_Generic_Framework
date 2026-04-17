@@ -19,12 +19,13 @@ import pages.CommonPage;
 import pages.DemoASPNETAwesome.CommonDemoASPAwesomePage;
 import pages.DemoASPNETAwesome.DemoASPAwesomePage;
 import pages.ProDinnerPage.CommonProDinnerPage;
+import utils.BaseClass;
 
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
-public class CommonStepDef extends PageComponent {
+public class CommonStepDef extends BaseClass {
     public static Logger logger = LoggerFactory.getLogger(CommonStepDef.class);
     private int CLIENT_CODE_STACK_INDEX;
     public CommonPage commonPage;
@@ -39,7 +40,7 @@ public class CommonStepDef extends PageComponent {
     public void navigatePage(String page) {
         this.thePage(page);
         Ensure.thatTheCurrentPage().currentUrl();
-        
+        this.injectAdBlocker();
         dismissCookieBanner();
 
     }
@@ -48,7 +49,7 @@ public class CommonStepDef extends PageComponent {
     public void iNavigateToSubGroup(String group, String subPage, String subPageItem) {
         waitABit(2000);
         dismissCookieBanner();
-        
+
         if (!group.isEmpty()) {
             testStep(String.format("the element %s in the page", group));
             WebElementFacade groupElement = commonDEMOAWESOMEPage.NAVIGATE_MODULE_PARENT(group);
@@ -69,7 +70,6 @@ public class CommonStepDef extends PageComponent {
             itemElement.waitUntilVisible().withTimeoutOf(15, java.util.concurrent.TimeUnit.SECONDS);
             clickElement(itemElement);
         }
-
 
     }
 
@@ -98,6 +98,7 @@ public class CommonStepDef extends PageComponent {
         }
         testStep(String.format("Navigate Page to %s", pageName));
         this.getDriver().get(pageUrl);
+        this.injectAdBlocker();
     }
 
     public void waitForPageInSecond(int timeInMilliseconds) {
@@ -266,14 +267,15 @@ public class CommonStepDef extends PageComponent {
             JavascriptExecutor js = (JavascriptExecutor) this.getDriver();
 
             try {
-                js.executeScript("document.querySelectorAll('a[href*=\"PrivacyPolicy\"]').forEach(el => el.style.display='none');");
+                js.executeScript(
+                        "document.querySelectorAll('a[href*=\"PrivacyPolicy\"]').forEach(el => el.style.display='none');");
             } catch (Exception e) {
                 testStep("Privacy policy link not found");
             }
 
             if (commonDEMOAWESOMEPage.BTN_COOKIE_PRIVACY_POLICY().isVisible()) {
                 js.executeScript("arguments[0].style.display='none';",
-                    commonDEMOAWESOMEPage.BTN_COOKIE_PRIVACY_POLICY().getWrappedElement());
+                        commonDEMOAWESOMEPage.BTN_COOKIE_PRIVACY_POLICY().getWrappedElement());
                 waitABit(500);
             }
         } catch (Exception e) {

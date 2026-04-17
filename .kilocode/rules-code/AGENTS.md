@@ -7,7 +7,7 @@
 
 ## Page Object Pattern
 
-- **Locator methods**: UPPERCASE (e.g., `SEARCH_PERSON_TXTBOX()`)
+- **Locator methods**: UPPERCASE (e.g., `TXT_SEARCH_PERSON()`)
 - See [DemoASPAwesomePage.java](src/test/java/pages/DemoASPNETAwesome/DemoASPAwesomePage.java:23)
 - Step definitions are written around this uppercase style
 
@@ -36,3 +36,7 @@
 - `enterText(element, value, waitMs)` - Type text
 - `verifyVisibilityofElement(element)` - Assert visible
 - `testStep(message)` - Log test steps
+
+
+## Code Standards & Best Practices Guide
+- See `CODE_STANDARDS.md`

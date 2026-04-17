@@ -44,6 +44,7 @@ public class GridStepDef {
     @And("^I filter the grid using the following :$")
     public void filterGridFilteringParentControl(DataTable dataTable) {
 
+        logger.info("Filtering grid using parent control elements with the following DataTable:");
         List<Map<String, String>> dataTableList = dataTable.asMaps(String.class, String.class);
 
         for (Map<String, String> e : dataTableList) {
@@ -81,6 +82,7 @@ public class GridStepDef {
 
     @Then("^I validate the grid result using the following :$")
     public void iValidateTheGridResultUsingTheFollowing(DataTable dataTable) {
+        logger.info("Validating grid results against expected results from DataTable...");
         List<String> actualResultList = getGridResult();
         // Skips the first row (header) and takes everything from index 1 to the end
         List<List<String>> expectedResultList = dataTable.asLists().subList(1, dataTable.asLists().size());

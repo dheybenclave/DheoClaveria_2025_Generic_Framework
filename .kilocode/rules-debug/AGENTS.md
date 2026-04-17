@@ -25,3 +25,6 @@
 
 - GitHub Actions workflow at [.github/workflows/maven.yml](.github/workflows/maven.yml)
 - Uploaded artifacts: serenity-report, timeline-report
+
+## Code Standards & Best Practices Guide
+- See `CODE_STANDARDS.md`

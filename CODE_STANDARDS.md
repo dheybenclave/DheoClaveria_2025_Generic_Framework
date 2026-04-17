@@ -35,7 +35,7 @@ src/test/resources/
 ### 2.1 Naming Conventions
 
 - **Class name**: `PascalCase` (e.g., `DemoASPAwesomePage`)
-- **Method/Locator name**: `UPPERCASE` with underscores (e.g., `SEARCH_PERSON_TXTBOX()`)
+- **Method/Locator name**: `UPPERCASE` with underscores (e.g., `TXT_SEARCH_PERSON()`)
 - **Package**: Match directory structure (e.g., `pages.DemoASPNETAwesome`)
 
 ### 2.2 Page Object Inheritance
@@ -68,7 +68,7 @@ public WebElementFacade searchPersonTextbox() {
 - Use `ListOfWebElementFacades` for multiple elements
 
 ```java
-public WebElementFacade SEARCH_PERSON_TXTBOX() { ... }
+public WebElementFacade TXT_SEARCH_PERSON() { ... }
 public ListOfWebElementFacades GRID_ROWS() { return findAll(By.xpath(selector)); }
 ```
 
@@ -127,6 +127,7 @@ public void navigatePage(String page) {
 
 @Then("I verify the grid filter using parent control element")
 public void verifyGridFilteringParentControl() {
+    logger.info("Verify Grid Filtering Parent Control");
     // implementation
 }
 ```
@@ -136,6 +137,8 @@ public void verifyGridFilteringParentControl() {
 ```java
 @And("^I filter the grid using the following :$")
 public void filterGridFilteringParentControl(DataTable dataTable) {
+    logger.info("Filtering grid using parent control elements with the following DataTable:");
+    
     List<Map<String, String>> dataTableList = dataTable.asMaps(String.class, String.class);
     
     for (Map<String, String> e : dataTableList) {

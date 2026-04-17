@@ -1,0 +1,38 @@
+{
+  "users": {
+    "newUser": {
+      "name": "Test User",
+      "email": "testuser{random}@example.com",
+      "password": "Test@123456",
+      "firstName": "Test",
+      "lastName": "User",
+      "company": "Test Company",
+      "address": "123 Test Street",
+      "address2": "Suite 100",
+      "country": "United States",
+      "state": "New York",
+      "city": "New York",
+      "zipcode": "10001",
+      "mobileNumber": "1234567890"
+    },
+    "registeredUser": {
+      "email": "registered@example.com",
+      "password": "Test@123456"
+    }
+  },
+  "products": {
+    "searchTerm": "Men",
+    "expectedFirstProduct": "Premium Polo Bear",
+    "quantity": 1
+  },
+  "checkout": {
+    "comment": "Please deliver during business hours"
+  },
+  "payment": {
+    "cardName": "Test User",
+    "cardNumber": "1234567890123456",
+    "cvc": "123",
+    "expiryMonth": "12",
+    "expiryYear": "2028"
+  }
+}
