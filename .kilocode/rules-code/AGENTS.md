@@ -1,8 +1,38 @@
 # Project Coding Rules (Non-Obvious Only)
 
-- Prefer Maven `verify` flows for runnable test changes because surefire is skipped in [pom.xml](../../pom.xml:130).
-- Add new feature files only under [src/test/resources/features/](../../src/test/resources/features/) because [CucumberTestSuite.java](../../src/test/java/CucumberTestSuite.java:10) loads `/features` from classpath.
-- Keep page-object locator methods uppercase-style (e.g., [DemoASPAwesomePage.SEARCH_PERSON_TXTBOX()](../../src/test/java/pages/DemoASPNETAwesome/DemoASPAwesomePage.java:23)); step defs are written around this style.
-- For login/credential scenarios, preserve root-relative Excel path behavior in [LoginStepDef.GetCredentials()](../../src/test/java/stepdefinitions/ProDinnerASPNetAwesome/LoginStepDef.java:56).
-- Avoid shared mutable scenario state in step defs because fixed 10-way parallel Cucumber execution is enabled in [junit-platform.properties](../../src/test/resources/junit-platform.properties:1).
+## Commands
 
+- **Run tests**: `mvn clean verify` (must use verify, not test)
+- **Feature files**: Must be under `src/test/resources/features/` (classpath-rooted)
+
+## Page Object Pattern
+
+- **Locator methods**: UPPERCASE (e.g., `SEARCH_PERSON_TXTBOX()`)
+- See [DemoASPAwesomePage.java](src/test/java/pages/DemoASPNETAwesome/DemoASPAwesomePage.java:23)
+- Step definitions are written around this uppercase style
+
+## Step Definition Hooks
+
+- **@Steps**: Inject CommonStepDef for shared methods
+- **@Page**: Inject page objects
+- **@Before/@After**: Cucumber hooks
+- **@WhenPageOpens**: Page load hooks
+
+## Credential Hooks
+
+- Excel path: `System.getProperty("user.dir") + "/src/test/resources/testData/" + file + ".xlsx"`
+- Required columns: `role`, `username`, `password`
+- Method: [ExcelReader.getUsernameAndPasswordByRole()](src/test/java/utils/ExcelReader.java:173)
+
+## Parallelism
+
+- 10-way parallel execution enabled in [junit-platform.properties:3](src/test/resources/junit-platform.properties:3)
+- Avoid shared mutable state in step definitions
+
+## Common Methods (via CommonStepDef)
+
+- `navigatePage(page)` - Navigate via pages.* config
+- `clickElement(element)` - Click with JS fallback
+- `enterText(element, value, waitMs)` - Type text
+- `verifyVisibilityofElement(element)` - Assert visible
+- `testStep(message)` - Log test steps

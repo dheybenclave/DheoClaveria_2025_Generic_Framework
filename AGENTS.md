@@ -1,128 +1,121 @@
-# AGENTS.md - Agent Guidance for This Repository
+# AGENTS.md
 
 This file provides guidance to agents working with code in this repository.
 
-## Build, Test & Execution Commands
+## Project Overview
 
-### Running Tests
-
-```bash
-# Run all tests (uses failsafe, not surefire)
-mvn clean verify
-
-# Run single scenario by tag (primary method)
-mvn clean verify -D"cucumber.filter.tags=@your_tag"
-
-# Run with specific browser environment (chrome|edge|firefox)
-mvn clean verify -Denvironment=chrome -D"cucumber.filter.tags=@your_tag"
-
-# Run with remote grid URL
-mvn clean verify -Dwebdriver.remote.url=http://localhost:4444/wd/hub -Denvironment=chrome
-```
-
-### Key Notes
-
-- **Use `verify`, NOT `test`** - surefire is disabled in [pom.xml](pom.xml:136)
-- Tests run via Maven failsafe lifecycle (`integration-test` + `verify`)
-- Parallelism is fixed at 10 - do not assume scenario execution order
-- Serenity reports generated at `build/test-results/timeline`
-
----
-
-## Code Style Guidelines
-
-### Naming Conventions
-
-- **Page Object Locators**: UPPERCASE method names (e.g., `SEARCH_PERSON_TXTBOX()`)
-  - See [CommonPage.java](src/test/java/pages/CommonPage.java:8) for pattern
-- **Step Definitions**: PascalCase with descriptive names (e.g., `LoginStepDef.java`)
-- **Feature Files**: Lowercase with underscores (e.g., `login.feature`)
-
-### Project Structure
-
-```
-src/test/java/
-├── stepdefinitions/     # Cucumber step definitions (extend PageComponent)
-├── pages/              # Page object models (extend UIInteractions)
-└── utils/              # Utility classes (ExcelReader, etc.)
-
-src/test/resources/
-├── features/           # Gherkin .feature files (classpath-rooted)
-├── serenity.conf       # Environment & page URL configuration
-└── testData/           # Test data (Excel files for credentials)
-```
-
-### Imports
-
-- Serenity: `net.serenitybdd.annotations.*`, `net.serenitybdd.screenplay.*`
-- Cucumber: `io.cucumber.java.en.*`, `io.cucumber.datatable.*`
-- Selenium: `org.openqa.selenium.*`
-- Use SLF4J for logging: `org.slf4j.*`
-
-### Coding Patterns
-
-1. **Page Navigation**: Use `CommonStepDef.thePage()` which reads from `pages.*` keys in serenity.conf
-2. **Credentials**: Use `ExcelReader.getUsernameAndPasswordByRole()` - requires Excel file with columns: `role`, `username`, `password`
-3. **Parallel Safety**: Avoid shared mutable state in step definitions
-4. **Element Locators**: Return `WebElementFacade` from page methods
-
-### Error Handling
-
-- Unknown page keys throw `UnknownPageException`
-- Use Serenity's `shouldBeVisible()`, `isPresent()`, `isVisible()` for assertions
-- Prefer `waitABit()` for simple waits (not for complex synchronization)
-
----
+- **Stack**: Serenity BDD, Cucumber, Java, Selenium WebDriver, Maven
+- **Domain**: UI automation for configurable web applications
+- **Framework**: Cucumber-on-JUnit-Platform with rich page objects
 
 ## Architecture
 
-### Test Execution Flow
+| Path | Description |
+|------|-------------|
+| `src/test/resources/features/*.feature` | Gherkin scenarios with `@Tag` markers |
+| `src/test/java/stepdefinitions/` | Step definitions (thin glue) |
+| `src/test/java/pages/` | Page objects with locators (rich) |
+| `src/test/java/utils/` | Utilities (ExcelReader, JsonReader) |
+| `src/test/resources/serenity.conf` | Environment configurations |
+| `target/site/serenity/` | HTML reports |
 
-1. [CucumberTestSuite.java](src/test/java/CucumberTestSuite.java:8) - Suite annotations (NOT legacy JUnit runners)
-2. Failsafe plugin runs integration-test phase
-3. Serenity plugin aggregates reports in post-integration-test
+## Quick Start Commands
 
-### Configuration
+```bash
+# CRITICAL: Use verify, NOT test - surefire is disabled
+mvn clean verify
 
-- **serenity.conf**: Central environment/browser/page routing
-- `-Denvironment=chrome|edge|firefox` maps to environment blocks
-- Only Chrome has `remote.url` wired for grid execution
-- Chrome uses per-run profile isolation: `--user-data-dir=target/chrome-profile-${random.int}`
+# Run specific tag
+mvn clean verify -D"cucumber.filter.tags=@UISmoke"
 
-### Feature File Discovery
+# Run with browser
+mvn clean verify -Denvironment=chrome -D"cucumber.filter.tags=@UISmoke"
 
-- Classpath-rooted to `/features` (NOT file-system rooted)
-- Must be under `src/test/resources/features/`
-- Tag-driven scenario selection only
+# Headless mode
+mvn clean verify -Dheadless.mode=true -D"cucumber.filter.tags=@UISmoke"
 
----
+# Single test by tag
+mvn clean verify -D"cucumber.filter.tags=@Wikipedia"
+```
 
-## Debugging
+## Environment Variables
 
-- Debug with `mvn verify` (not `mvn test`)
-- Scenario debugging via Cucumber tags: `-D"cucumber.filter.tags=@tag"`
-- URL navigation failures: check `pages.<name>` entries in serenity.conf
-- Intermittent timing issues: likely amplified by parallelism=10
-- Chrome profile contamination: check serenity.conf overrides
+| Variable | Description | Default |
+|----------|-------------|---------|
+| `environment` | Target environment (chrome, edge, firefox) | chrome |
+| `headless.mode` | Browser mode | true |
+| `webdriver.remote.url` | Remote Grid URL | (empty) |
 
----
+## Code Standards
 
-## Important File Locations
+### Page Objects
 
-| File | Purpose |
-|------|---------|
-| `pom.xml` | Build config, surefire skipped |
-| `serenity.conf` | Environment & page configs |
-| `junit-platform.properties` | Parallelism settings |
-| `CucumberTestSuite.java` | Test suite loader |
-| `ExcelReader.java` | Credential lookup utility |
+- **Locator methods**: UPPERCASE (e.g., `SEARCH_PERSON_TXTBOX()`)
+- **Return type**: `WebElementFacade`
+- **Inheritance**: Extend `UIInteractions` or common pages
 
----
+```java
+public class LoginPage extends CommonPage {
+    @FindBy(id = "username")
+    private WebElementFacade txtUsername;
 
-## Non-Obvious Rules
+    public WebElementFacade SEARCH_PERSON_TXTBOX() {
+        return txtUsername;
+    }
+}
+```
 
-1. Run commands from repo root (Excel paths are root-relative)
-2. Feature files MUST stay under `src/test/resources/features/`
-3. Keep page locator methods uppercase for step def consistency
-4. Chrome remote-grid toggle available; Edge/Firefox are local-centric
-5. Timeline reports go to `build/test-results/timeline` even for Maven runs
+### Step Definitions
+
+- **@Steps**: Inject CommonStepDef for shared methods
+- **@Page**: Inject page objects
+- **Parallelism**: 10-way - avoid shared mutable state
+
+```java
+public class LoginStepDef {
+    @Steps
+    CommonStepDef commonStepDef;
+
+    @Page
+    LoginPage loginPage;
+
+    @Given("I am on the login page")
+    public void iAmOnTheLoginPage() {
+        commonStepDef.navigatePage("login");
+    }
+}
+```
+
+### Credentials (Excel)
+
+- Excel file must have columns: `role`, `username`, `password`
+- Method: `ExcelReader.getUsernameAndPasswordByRole(filePath, sheetName, role)`
+
+## Page Routing
+
+- Uses `pages.*` keys in `serenity.conf`
+- Page name is case-sensitive - use lowercase when navigating
+- Add new pages to `serenity.conf`:
+
+```properties
+pages {
+  wikipedia = "https://wikipedia.org"
+}
+```
+
+## Reports
+
+- Serenity: `target/site/serenity/index.html`
+- Timeline: `target/test-results/timeline/`
+
+## Mode-Specific Rules
+
+See `.kilocode/rules-*/AGENTS.md` for:
+- **code** - Coding rules & patterns
+- **debug** - Debugging commands & hooks
+- **ask** - Documentation context
+- **architect** - Architecture constraints
+
+## Kilo Commands & Hooks
+
+See `.kilocode/commands/` and `.kilocode/hooks/` for Kilo-specific automation.

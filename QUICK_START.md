@@ -1,6 +1,8 @@
 # Quick Start Guide
 
-## 🚀 Run Tests Locally (No Grid)
+> **⚠️ Critical**: Use `mvn clean verify` (NOT `mvn test`) - surefire is disabled in pom.xml.
+
+## 🚀 Run Tests Locally
 
 ```bash
 # Chrome (default)
@@ -13,78 +15,37 @@ mvn clean verify -Denvironment=firefox -D"cucumber.filter.tags"="@UISmoke"
 mvn clean verify -Dheadless.mode=true -D"cucumber.filter.tags"="@UISmoke"
 ```
 
-## 🌐 Run Tests with Selenium Grid
+## ☁️ Run in GitHub Actions
 
-### Step 1: Start Selenium Grid
+The workflow runs automatically on push/PR to `main`/`master`, or manually via workflow_dispatch:
 
-**Windows:**
-```cmd
-start-selenium-grid.bat
-```
+- **Tag**: `@UISmoke` (or your custom tag)
+- **Browser**: `chrome` (default), `edge`, or `firefox`
 
-**Linux/Mac:**
-```bash
-./start-selenium-grid.sh
-```
-
-### Step 2: Run Tests Against Grid
-
-```bash
-mvn clean verify \
-  -Dwebdriver.remote.url="http://localhost:4444/wd/hub" \
-  -D"cucumber.filter.tags"="@UISmoke"
-```
-
-### Step 3: View Results
-
-- **Grid Console:** http://localhost:4444/ui
-- **Watch Tests Live (noVNC):** http://localhost:7900 (password: secret)
-- **Serenity Report:** `target/site/serenity/index.html`
-
-### Step 4: Stop Grid
-
-**Windows:**
-```cmd
-stop-selenium-grid.bat
-```
-
-**Linux/Mac:**
-```bash
-./stop-selenium-grid.sh
-```
-
-## ☁️ Run in Azure Pipeline
-
-1. Push code to repository
-2. Create pipeline in Azure DevOps pointing to `azure-pipelines.yml`
-3. Run pipeline with parameters:
-   - **Tag:** `@UISmoke` (or your tag)
-   - **Browser:** `chrome` / `edge` / `firefox`
-   - **Headless:** `true` / `false`
-   - **Use Remote WebDriver:** `false` (for local) or `true` (for Grid)
+Reports are uploaded as artifacts:
+- Serenity Report: `target/site/serenity/`
+- Timeline Report: `build/test-results/timeline/`
 
 ## 📊 View Reports
 
-**Local:**
 ```bash
 # Open Serenity report
 start target/site/serenity/index.html        # Windows
-open target/site/serenity/index.html         # Mac
+open target/site/serenity/index.html          # Mac
 xdg-open target/site/serenity/index.html     # Linux
 ```
-
-**Azure Pipeline:**
-- View in **Pipeline Summary** (attached report)
-- Download from **Artifacts** → `serenity-report`
 
 ## 🔧 Common Commands
 
 ```bash
-# Run specific feature
+# Run specific feature by tag
 mvn clean verify -D"cucumber.filter.tags"="@CreateMeal"
 
 # Run all tests
 mvn clean verify
+
+# Run with specific environment
+mvn clean verify -Denvironment=chrome -Dheadless.mode=true
 
 # Skip tests (compile only)
 mvn clean compile -DskipTests
@@ -94,33 +55,19 @@ mvn versions:display-dependency-updates
 
 # Clean everything
 mvn clean
-docker-compose -f docker-compose-selenium-grid.yml down -v
 ```
 
 ## 🐛 Troubleshooting
 
-**Tests fail locally but pass in Grid?**
-- Check browser versions match
-- Increase timeouts in `serenity.conf`
-
-**Grid won't start?**
-- Ensure Docker Desktop is running
-- Check port 4444 is not in use: `netstat -ano | findstr :4444`
-- Check Docker logs: `docker-compose -f docker-compose-selenium-grid.yml logs`
-
 **Chrome crashes?**
 - Use headless mode: `-Dheadless.mode=true`
-- Increase shared memory in docker-compose: `shm_size: 4gb`
 
-**Can't connect to Grid?**
-- Verify Grid is running: `curl http://localhost:4444/wd/hub/status`
-- Check Grid Console: http://localhost:4444/ui
+**Tests fail in CI but pass locally?**
+- Check browser versions match (CI uses Chrome stable)
+- Increase timeouts in `serenity.conf`
 
-## 📚 Documentation
-
-- **[SELENIUM_GRID_SETUP.md](SELENIUM_GRID_SETUP.md)** - Complete Grid setup guide
-- **[AZURE_PIPELINE_SETUP.md](AZURE_PIPELINE_SETUP.md)** - Pipeline configuration guide
-- **[README.md](README.md)** - Project overview
+**Feature files not found?**
+- Ensure they are under `src/test/resources/features/` (classpath-rooted)
 
 ## 🎯 Test Tags
 
@@ -136,10 +83,14 @@ Example:
 mvn clean verify -D"cucumber.filter.tags"="@Regression and not @Slow"
 ```
 
+## 📚 Documentation
+
+- **[AGENTS.md](AGENTS.md)** - Agent guidance for AI assistants
+- **[README.md](README.md)** - Project overview
+
 ## 💡 Pro Tips
 
-1. **Use Grid for parallel testing** - Much faster than sequential local runs
-2. **Watch tests with noVNC** - Great for debugging failures
-3. **Use headless in CI** - More stable and faster
-4. **Tag your tests** - Run only what you need
-5. **Check Grid Console** - Monitor session distribution and capacity
+1. **Tag your tests** - Run only what you need
+2. **Use headless in CI** - More stable and faster
+3. **Check reports** - Review Serenity HTML reports for debugging
+4. **Run from project root** - Excel paths are root-relative
