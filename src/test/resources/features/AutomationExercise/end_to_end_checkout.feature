@@ -33,13 +33,12 @@ Feature: End to End Checkout - Automation Exercise
     # Order Confirmation
     Then I should see Order Confirmed message
 
-    # # Verify product details
-    # And I should see product name in order
-    # And I should see product price in order
-    
     # Invoice
     And I download invoice
     Then I should see invoice file downloaded
+    Then I should see invoice total amount
+    Then I verify invoice product name matches in downloaded file
+    Then I verify invoice total matches in downloaded file
 
     Examples:
       | Page                   | Role           |
