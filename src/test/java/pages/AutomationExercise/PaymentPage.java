@@ -103,11 +103,11 @@ public class PaymentPage extends CommonAutomationExercisePage {
     }
 
     public WebElementFacade TXT_INVOICE_PRODUCT_NAME() {
-        WebElementFacade product = $$("//td[@class='cart_description']//h4").first();
+        WebElementFacade product = $$("//td[@class='cart_description']//h4").getFirst();
         if (product != null && product.isPresent()) {
             return product;
         }
-        return $$("//td[contains(@class,'description')]//h4").first();
+        return $$("//td[contains(@class,'description')]//h4").getFirst();
     }
 
     // Invoice total - try multiple selectors
