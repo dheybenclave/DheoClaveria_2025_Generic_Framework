@@ -45,21 +45,21 @@ jobs:
 
       - name: Build and Run Tests
         run: |
-          if [[ -z "${{ inputs.test_filter }}" ]]; then
-            TAG_FILTER="@UISmoke"
-          else
-            TAG_FILTER="${{ inputs.test_filter }}"
-          fi
           ENV_BROWSER=${{ inputs.environment }}
           if [[ -z "$ENV_BROWSER" ]]; then
             ENV_BROWSER="chrome"
           fi
-          mvn clean verify \
-            -Dcucumber.filter.tags="${TAG_FILTER}" \
-            -Denvironment="${ENV_BROWSER}" \
-            -Dheadless.mode=true \
-            -Dwebdriver.chrome.args="--headless=new" \
-            --no-transfer-progress
+          
+          # Build base Maven command
+          MAVEN_CMD="mvn clean verify -Denvironment=\"${ENV_BROWSER}\" -Dheadless.mode=true --no-transfer-progress"
+          
+          # Add tag filter only if provided; otherwise run all tests
+          if [[ -n "${{ inputs.test_filter }}" ]]; then
+            MAVEN_CMD="${MAVEN_CMD} -Dcucumber.filter.tags=\"${{ inputs.test_filter }}\""
+          fi
+          
+          echo "Executing: ${MAVEN_CMD}"
+          eval ${MAVEN_CMD}
 
       - name: Upload Serenity Reports
         if: always()
