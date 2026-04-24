@@ -37,8 +37,10 @@ public class GridStepDef {
     @Then("I verify the grid filter using parent control element")
     public void verifyGridFilteringParentControl() {
         AbstractBooleanAssert<?> isHeaderDisplayed = assertThat(demoASPAwesemoPage.HEADER().isVisible()).isTrue();
-        logger.info(String.format("I verify the grid filter using parent control elements is %s ", isHeaderDisplayed), isHeaderDisplayed);
+        logger.info(String.format("I verify the grid filter using parent control elements is %s ", isHeaderDisplayed),
+                isHeaderDisplayed);
         demoASPAwesemoPage.FILER_GRID_USING_PARENT_CONTROL_GRID().isDisplayed();
+
     }
 
     @And("^I filter the grid using the following :$")
@@ -91,7 +93,8 @@ public class GridStepDef {
 
         assertThat(actualResultList.size()).isEqualTo(expectedResultList.size());
         Assert.assertEquals(
-                String.format("The Expected(%s) and Actual(%s) Result size in Grid List is not the same ", expectedResultList.size(), actualResultList.size()),
+                String.format("The Expected(%s) and Actual(%s) Result size in Grid List is not the same ",
+                        expectedResultList.size(), actualResultList.size()),
                 expectedResultList.size(),
                 actualResultList.size());
 
@@ -99,9 +102,10 @@ public class GridStepDef {
 
             String currExpectedList = expectedResultList.get(i).toString().replaceAll("\\[|\\]|,", "");
             String currActualList = actualResultList.get(i);
-            logger.info(String.format("currExpectedList %s | currActualList %s", currExpectedList, actualResultList.get(i)));
+            logger.info(String.format("currExpectedList %s | currActualList %s", currExpectedList,
+                    actualResultList.get(i)));
             assertThat(actualResultList).contains(currExpectedList);
-//            Assert.assertEquals(currActualList, currExpectedList);
+            // Assert.assertEquals(currActualList, currExpectedList);
         }
     }
 
@@ -124,9 +128,9 @@ public class GridStepDef {
         logger.info(String.format("Actual Rows from Grid: %s", actualResultList));
 
         Assert.assertTrue(
-                String.format("Grid result mismatch for filters %s. Expected: %s | Actual: %s", filters, expectedRows, actualResultList),
-                isGridResultMatch(actualResultList, expectedRows)
-        );
+                String.format("Grid result mismatch for filters %s. Expected: %s | Actual: %s", filters, expectedRows,
+                        actualResultList),
+                isGridResultMatch(actualResultList, expectedRows));
     }
 
     private List<String> getExpectedGridResultsFromJson(List<Map<String, String>> filters) throws IOException {
@@ -140,19 +144,20 @@ public class GridStepDef {
     private String buildGridRowText(Map<String, Object> row) {
         logger.info(String.format("Building grid row text from JSON row: %s", row));
         return String.format("%s %s %s %s %s %s %s",
-                        row.get("Id"),
-                        row.get("Person"),
-                        row.get("Food"),
-                        row.get("Country"),
-                        row.get("Date"),
-                        row.get("Location"),
-                        row.get("Chef"))
+                row.get("Id"),
+                row.get("Person"),
+                row.get("Food"),
+                row.get("Country"),
+                row.get("Date"),
+                row.get("Location"),
+                row.get("Chef"))
                 .replaceAll("\\s+", " ")
                 .trim();
     }
 
     private boolean isGridResultMatch(List<String> actual, List<String> expected) {
-        logger.info(String.format("Comparing actual grid results with expected results. Actual: %s | Expected: %s", actual, expected));
+        logger.info(String.format("Comparing actual grid results with expected results. Actual: %s | Expected: %s",
+                actual, expected));
         if (actual.size() != expected.size()) {
             return false;
         }

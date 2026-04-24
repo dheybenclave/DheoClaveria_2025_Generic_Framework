@@ -11,7 +11,7 @@ public class AuthPage extends CommonAutomationExercisePage {
 
     // ========== SIGNUP FORM ==========
     public WebElementFacade TXT_SIGNUP_NAME() {
-        return $("//input[@placeholder='Name']");
+        return $("//input[@data-qa='signup-name']");
     }
 
     public WebElementFacade TXT_SIGNUP_EMAIL() {

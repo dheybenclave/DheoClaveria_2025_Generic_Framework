@@ -18,6 +18,23 @@
         "-y",
         "@playwright/mcp@0.0.38"
       ]
+    },
+    "playwright-local": {
+      "command": "npx",
+      "args": [
+        "@playwright/mcp@latest"
+      ],
+      "env": {
+        "PLAYWRIGHT_BROWSERS_PATH": "0"
+      }
+    },
+    "filesystem-project": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@modelcontextprotocol/server-filesystem",
+        "."
+      ]
     }
   }
 }
